@@ -30,6 +30,7 @@ class UserPanelProvider extends PanelProvider
             ->id('user')
             ->path('user')
             ->login()
+            ->profile()
             ->brandName('ITRSync')
             ->colors([
                 'primary' => Color::Violet,

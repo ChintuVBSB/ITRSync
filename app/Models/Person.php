@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\BankDetail;
 
 class Person extends Model
 {
@@ -25,4 +26,13 @@ class Person extends Model
         'email',
     ];
     protected $table = 'persons';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function bankDetails()
+    {
+        return $this->hasMany(BankDetail::class);
+    }
 }

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater; 
 
 class PersonResource extends Resource
 {
@@ -30,15 +31,19 @@ class PersonResource extends Resource
 {
     return $form
         ->schema([
-            TextInput::make('name')->required(),
+            TextInput::make('name')
+                ->required(),
             Select::make('gender')
                 ->options([
                     'male' => 'Male',
                     'female' => 'Female',
                     'other' => 'Other',
-                ])->required(),
+                ])
+                ->required(),
 
-            DatePicker::make('dob')->label('Date of Birth')->required(),
+            DatePicker::make('dob')
+                ->label('Date of Birth')
+                ->required(),
 
             Textarea::make('address')->required(),
 
@@ -46,19 +51,42 @@ class PersonResource extends Resource
             FileUpload::make('pan_attachment')->label('PAN Attachment')->required(),
 
             TextInput::make('aadhar')->required(),
-            FileUpload::make('aadhar_attachment')->label('Aadhar Attachment')->required(),
+            FileUpload::make('aadhar_attachment')
+            ->label('Aadhar Attachment')
+            ->required(),
 
             Select::make('residential_status')
                 ->label('Residential Status')
                 ->options([
                     'Resident' => 'Resident',
                     'Non-Resident' => 'Non-Resident',
-                    'Resident but Not Ordinary Resident' => 'Resident but Not Ordinary Resident',
+                    'Resident but Not Ordinary Resident' 
+                    => 'Resident but Not Ordinary Resident',
                 ])
                 ->columns(1),
 
-            TextInput::make('mobile')->required(),
-            TextInput::make('email')->email()->required(),
+            TextInput::make('mobile')
+            ->required(),
+            TextInput::make('email')
+            ->email()
+            ->required(),
+            Repeater::make('bankDetails')   
+                ->label('Bank Details')
+                ->relationship('bankDetails')
+                ->createItemButtonLabel('+ Add Bank Info')
+                ->schema([
+                    TextInput::make('bank_name')
+                        ->label('Bank Name')
+                        ->required(), 
+                    TextInput::make('account_number')
+                        ->label('Account Number')
+                        ->required(), 
+                    TextInput::make('ifsc_code')
+                        ->label('IFSC Code')
+                        ->required(),
+                ])
+                ->columns(3)
+                ->columnSpanFull()
         ]);
 }
 
@@ -67,9 +95,8 @@ class PersonResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('email'),
                 TextColumn::make('mobile'),
-                TextColumn::make('created_at')->label('Created')->dateTime(),
+                TextColumn::make('email')
             ])
             ->filters([
             ])
