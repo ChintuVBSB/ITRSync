@@ -25,7 +25,7 @@ class PersonResource extends Resource
 {
     protected static ?string $model = Person::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
 {
@@ -96,7 +96,8 @@ class PersonResource extends Resource
             ->columns([
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('mobile'),
-                TextColumn::make('email')
+                TextColumn::make('email'),
+                TextColumn::make('pan'),
             ])
             ->filters([
             ])

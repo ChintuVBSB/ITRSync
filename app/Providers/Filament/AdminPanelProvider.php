@@ -57,10 +57,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-    }
-    public function canAccessPanel(Authenticatable $user): bool
-    {
-        return in_array($user->role, ['admin', 'manager']);
-    }
+        }
 
 }

@@ -26,4 +26,14 @@ class Submission extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function incomeTypes()
+    {
+        return $this->belongsToMany(IncomeType::class, 'income_type_submission');
+    }
+
+    public function deductionTypes()
+    {
+        return $this->belongsToMany(DeductionType::class, 'deduction_type_submission');
+    }
 }

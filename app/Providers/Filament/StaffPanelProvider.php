@@ -17,6 +17,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Auth\Authenticatable;
 
 class StaffPanelProvider extends PanelProvider
 {   
@@ -58,5 +59,9 @@ class StaffPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+    public function canAccessPanel(Authenticatable $user): bool
+    {
+        return in_array($user->role, ['staff', "manager"]);
     }
 }

@@ -9,15 +9,17 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
+
 class SubmissionResource extends Resource
 {
     protected static ?string $model = Submission::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'General Info';
+    protected static ?string $navigationIcon = 'heroicon-o-identification';
 
     public static function form(Form $form): Form
     {
@@ -31,7 +33,10 @@ class SubmissionResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('person.name')->label('Person Name')->searchable(),
+                TextColumn::make('person.pan')->label('pan'),
+                TextColumn::make('year')->label('Financial Year'),
+                TextColumn::make('created_at')->label('Submitted At')->dateTime(),
             ])
             ->filters([
                 //
@@ -59,6 +64,7 @@ class SubmissionResource extends Resource
             'index' => Pages\ListSubmissions::route('/'),
             'create' => Pages\CreateSubmission::route('/create'),
             'edit' => Pages\EditSubmission::route('/{record}/edit'),
+            'view' => Pages\ViewSubmission::route('/{record}'),
         ];
     }
 }
