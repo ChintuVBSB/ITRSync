@@ -3,12 +3,19 @@
 namespace App\Filament\User\Resources\SubmissionResource\Pages;
 
 use App\Filament\User\Resources\SubmissionResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Resources\Pages\Page;
+use App\Models\Submission;
 
-class ViewSubmission extends ViewRecord
+class ViewSubmission extends Page
 {
     protected static string $resource = SubmissionResource::class;
 
-    protected static string $view = "filament.resources.submission.view-submission"; 
+    public Submission $submission;
+
+    protected static string $view = 'filament.user.resources.submission-resource.pages.view-submission';
+
+    public function mount($record): void
+    {
+        $this->submission = Submission::with(['person', 'incomeTypes', 'deductionTypes'])->findOrFail($record);
+    }
 }

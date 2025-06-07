@@ -1,4 +1,3 @@
-
 <x-filament-panels::page>
-    @include('livewire.submission-information')
+    @livewire('submission-details.blade.php')
 </x-filament-panels::page>

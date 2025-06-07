@@ -13,12 +13,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use App\Models\Person; 
 
 class SubmissionResource extends Resource
 {
     protected static ?string $model = Submission::class;
-    protected static ?string $navigationLabel = 'General Info';
+    protected static ?string $navigationLabel = 'Submission';
     protected static ?string $navigationIcon = 'heroicon-o-identification';
 
     public static function form(Form $form): Form
@@ -42,8 +42,11 @@ class SubmissionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\Action::make('View')
+            ->url(fn ($record) => route('filament.user.resources.submissions.view', $record))
+            ->icon('heroicon-o-eye'),
+])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -54,9 +57,10 @@ class SubmissionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
         ];
     }
+
+   
 
     public static function getPages(): array
     {
@@ -64,7 +68,7 @@ class SubmissionResource extends Resource
             'index' => Pages\ListSubmissions::route('/'),
             'create' => Pages\CreateSubmission::route('/create'),
             'edit' => Pages\EditSubmission::route('/{record}/edit'),
-            'view' => Pages\ViewSubmission::route('/{record}'),
+            'view' => Pages\ViewSubmission::route('/{record}/view'),
         ];
     }
 }
