@@ -94,21 +94,19 @@
         @if($submission->deductionTypes->pluck('slug')->contains('other'))
             @include('partials.accordions.deductions.deduction-from-other')
         @endif
+
+        <form action="{{ route('user.submissions.preview', $submission->id) }}" method="POST">
+    @csrf
+    <button
+        type="submit"
+        class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-semibold hover:bg-blue-700 transition"
+    >
+        Save as Draft
+    </button>
+</form>
     </div>
     <!-- Save & Preview Buttons -->
-<div class="flex justify-end gap-2 mt-6 space-x-4">
-   
 
-    <button 
-        class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-semibold text-gray-700 hover:bg-gray-200 transition">
-        Preview
-    </button>
-     <button
-        wire:click="save"
-        class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-semibold  hover:bg-blue-700 transition">
-        Save
-    </button>
-</div>
 
 </div>
 
