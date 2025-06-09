@@ -15,11 +15,8 @@
             <span class="text-sm font-medium">
                 🏦 Bank statement showing interest payments OR Interest Certificate
             </span>
-            <div class="w-40">
-                @include('partials.accordions.assets.file-upload', [
-                    'label' => 'Education Loan Proof',
-                    'description' => 'Upload bank interest statement or certificate from financial institution.'
-                ])
+            <div class="w-48">
+                <x-file-upload id="education_loan_certificate" wire:model="data.deductions.80E.education_loan_certificate" />
             </div>
         </div>
     </div>

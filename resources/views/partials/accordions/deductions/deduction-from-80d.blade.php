@@ -16,8 +16,8 @@
                 <span class="text-sm font-medium">
                     1. Premium payment receipts for health insurance (Self, Spouse, Children, Parents)
                 </span>
-                <div class="w-40">
-                    @include('partials.accordions.assets.file-upload', ['label' => 'Mediclaim Receipt'])
+                <div class="w-48">
+                    <x-file-upload id="health_insurance" wire:model="data.deductions.80D.health_insurance" />
                 </div>
             </div>
         </div>

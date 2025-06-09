@@ -12,24 +12,52 @@
         </button>
 
         <div x-show="open" x-collapse class="px-6 py-4 space-y-4 text-sm text-gray-700">
-            @foreach([
-                'Premium payment receipts for life insurance',
-                'PPF account statements',
-                'EPF account statement',
-                'Tax Saver Mutual Funds / FDs',
-                'Tuition fees (Spouse/Children)',
-                'Any other Investment Proofs.'
-            ] as $label)
-                <div class="flex items-center justify-between gap-4">
-                    <span class="text-sm font-medium">{{ $loop->iteration }}. {{ $label }}</span>
-                    <div class="w-40">
-                        @include('partials.accordions.assets.file-upload', ['label' => 'Upload'])
-                    </div>
+            <!-- 1 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">1. Premium payment receipts for life insurance</span>
+                <div class="w-48">
+                    <x-file-upload id="life_insurance" wire:model="data.deductions.80C.life_insurance" />
                 </div>
-            @endforeach
+            </div>
 
-            <div>
-                @include('partials.accordions.assets.next')
+            <!-- 2 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">2. PPF account statements</span>
+                <div class="w-48">
+                    <x-file-upload id="ppf" wire:model="data.deductions.80C.ppf" />
+                </div>
+            </div>
+
+            <!-- 3 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">3. EPF account statement</span>
+                <div class="w-48">
+                    <x-file-upload id="epf" wire:model="data.deductions.80C.epf" />
+                </div>
+            </div>
+
+            <!-- 4 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">4. Tax Saver Mutual Funds / FDs</span>
+                <div class="w-48">
+                    <x-file-upload id="mutual_funds" wire:model="data.deductions.80C.mutual_funds" />
+                </div>
+            </div>
+
+            <!-- 5 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">5. Tuition fees (Spouse/Children)</span>
+                <div class="w-48">
+                    <x-file-upload id="tuition_fees" wire:model="data.deductions.80C.tuition_fees" />
+                </div>
+            </div>
+
+            <!-- 6 -->
+            <div class="flex items-center justify-between gap-4">
+                <span class="text-sm font-medium">6. Any other Investment Proofs</span>
+                <div class="w-48">
+                    <x-file-upload id="other_proofs" wire:model="data.deductions.80C.other_proofs" />
+                </div>
             </div>
         </div>
     </div>

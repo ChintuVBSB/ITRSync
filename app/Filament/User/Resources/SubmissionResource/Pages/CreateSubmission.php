@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Auth;
 class CreateSubmission extends CreateRecord
 {
     protected static string $resource = SubmissionResource::class;
-
+    protected array $selectedIncomeTypes = [];
+    protected array $selectedDeductionTypes = [];
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -68,27 +69,28 @@ class CreateSubmission extends CreateRecord
         ]);
     }
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['user_id'] = Auth::id();
-        return $data;
-    }
+        protected function mutateFormDataBeforeCreate(array $data): array
+        {   
+            $this->selectedIncomeTypes = $data['income_types'] ?? [];
+            $this->selectedDeductionTypes = $data['deduction_types'] ?? [];
+
+            unset($data['income_types'], $data['deduction_types']);
+            $data['user_id'] = Auth::id();
+            return $data;
+        }
 
     protected function afterCreate(): void
-    {
-        $submission = $this->record;
+{
+    $submission = $this->record;
 
-        $incomeTypes = collect($this->data['income_types'] ?? []);
-        $incomeTypeIds = IncomeType::whereIn('slug', $incomeTypes)->pluck('id');
+    $incomeTypeIds = IncomeType::whereIn('slug', $this->selectedIncomeTypes)->pluck('id');
+    $deductionTypeIds = DeductionType::whereIn('slug', $this->selectedDeductionTypes)->pluck('id');
 
-        $deductionTypes = collect($this->data['deduction_types'] ?? []);
-        $deductionTypeIds = DeductionType::whereIn('slug', $deductionTypes)->pluck('id');
+    $submission->incomeTypes()->sync($incomeTypeIds);
+    $submission->deductionTypes()->sync($deductionTypeIds);
 
-        $submission->incomeTypes()->sync($incomeTypeIds);
-        $submission->deductionTypes()->sync($deductionTypeIds);
-
-        $this->redirect(route('submission.details', ['submissionId' => $submission->id]));
-    }
+    $this->redirect(route('submission.details', ['submissionId' => $submission->id]));
+}
 
     protected function getRedirectUrl(): string
     {

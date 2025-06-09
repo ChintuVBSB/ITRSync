@@ -1,6 +1,6 @@
 <div class="p-6">
     <!-- Profile Card -->
-    
+    @if($submission->person)
     <div class="bg-white mb-4 border border-gray-200 rounded-xl shadow-sm">
         <div class="px-6 py-4 border-b">
             <h2 class="text-lg font-semibold text-gray-800">Profile</h2>
@@ -44,32 +44,71 @@
             </div>
         </div>
     </div>
+    @else
+        <p class="text-gray-500 px-6">No person details linked to this submission.</p>
+    @endif
 
     <div x-data="{ open: null }" class="space-y-3">
+
     <!-- Income from Salary -->
     <h1 class="text-xl font-bold">Income</h1>
-    @include('partials.accordions.income-from-salary')
 
-    <!-- Income House Property-->
-    @include('partials.accordions.income-from-house-property')
+        @if($submission->incomeTypes->pluck('slug')->contains('salary'))
+            @include('partials.accordions.income-from-salary')
+        @endif
 
-    <!-- Income From Business and Profession-->
-    @include('partials.accordions.income-from-business')
+        @if($submission->incomeTypes->pluck('slug')->contains('house_property'))
+            @include('partials.accordions.income-from-house-property')
+        @endif
 
-    <!--Income From capital gain -->
-    @include('partials.accordions.income-from-capital-gains')   
+        @if($submission->incomeTypes->pluck('slug')->contains('business'))
+            @include('partials.accordions.income-from-business')
+        @endif
 
-    <!-- Income From Other Souces -->
-    @include('partials.accordions.income-from-other-sources')
-    
-    <h1 class="text-xl font-bold">Deduction</h1>
+        @if($submission->incomeTypes->pluck('slug')->contains('capital_gains'))
+            @include('partials.accordions.income-from-capital-gains')
+        @endif
 
-    @include('partials.accordions.deductions.deduction-from-80c')
-    @include('partials.accordions.deductions.deduction-from-80d')
-    @include('partials.accordions.deductions.deduction-from-80e')
-    @include('partials.accordions.deductions.deduction-from-80g')
-    @include('partials.accordions.deductions.deduction-from-other')
+        @if($submission->incomeTypes->pluck('slug')->contains('other_sources'))
+            @include('partials.accordions.income-from-other-sources')
+        @endif
+
+        <h1 class="text-xl font-bold">Deduction</h1>
+
+        @if($submission->deductionTypes->pluck('slug')->contains('80C'))
+            @include('partials.accordions.deductions.deduction-from-80c')
+        @endif
+
+        @if($submission->deductionTypes->pluck('slug')->contains('80D'))
+            @include('partials.accordions.deductions.deduction-from-80d')
+        @endif
+
+        @if($submission->deductionTypes->pluck('slug')->contains('80E'))
+            @include('partials.accordions.deductions.deduction-from-80e')
+        @endif
+
+        @if($submission->deductionTypes->pluck('slug')->contains('80G'))
+            @include('partials.accordions.deductions.deduction-from-80g')
+        @endif
+
+        @if($submission->deductionTypes->pluck('slug')->contains('other'))
+            @include('partials.accordions.deductions.deduction-from-other')
+        @endif
+    </div>
+    <!-- Save & Preview Buttons -->
+<div class="flex justify-end gap-2 mt-6 space-x-4">
+   
+
+    <button 
+        class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-semibold text-gray-700 hover:bg-gray-200 transition">
+        Preview
+    </button>
+     <button
+        wire:click="save"
+        class="inline-flex items-center px-4 py-2 bg-gray-100 border border-gray-300 rounded-md font-semibold  hover:bg-blue-700 transition">
+        Save
+    </button>
 </div>
 
-
 </div>
+

@@ -15,3 +15,5 @@ class DeductionType extends Model
         return $this->belongsToMany(Submission::class);
     }
 }
+
+

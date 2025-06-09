@@ -1,4 +1,4 @@
-<div x-data="{ open: true }" class="space-y-6">
+<div x-data="{ open:false }" class="space-y-6">
     <div class="bg-white border-none rounded-xl shadow-sm">
         <button @click="open = !open"
             class="w-full flex justify-between items-center px-6 py-3 text-left text-lg font-semibold text-gray-800 hover:bg-gray-50">
@@ -12,59 +12,47 @@
         </button>
 
         <div x-show="open" x-collapse class="px-6 py-4 space-y-6 text-sm text-gray-700">
-
-            <!-- 1. Interest Certificate -->
             <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">
-                    1. Interest Certificate (Savings, FD, RD)
-                </span>
-                <div class="w-40">
-                    @include('partials.accordions.assets.file-upload', [
-                        'label' => 'Interest Certificate',
-                        'description' => 'Upload certificates for interest earned from savings, fixed or recurring deposits.',
-                        'multiple' => true
-                    ])
+                <span class="text-sm font-medium">1. Interest Certificate (Savings, FD, RD)</span>
+                <div class="w-48">
+                    <x-file-upload wire:model="data.income.other_sources.interest_certificate" />
                 </div>
             </div>
 
-            <!-- 2. Dividend Income -->
             <div>
                 <label class="block text-sm font-medium mb-1">2. Dividend Income (if any)</label>
                 <div class="flex flex-wrap gap-4">
-                    <input type="text" class="rounded border p-1 w-1/3" placeholder="Company Name" />
-                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount" />
+                    <input type="text" class="rounded border p-1 w-1/3" placeholder="Company Name"
+                        wire:model="data.income.other_sources.dividend.company" />
+                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount"
+                        wire:model="data.income.other_sources.dividend.amount" />
                 </div>
             </div>
 
-            <!-- 3. Interest from Other Party -->
             <div>
                 <label class="block text-sm font-medium mb-1">3. Interest from Other Party (if any)</label>
                 <div class="flex flex-wrap gap-4">
-                    <input type="text" class="rounded border p-1 w-1/3" placeholder="Name of Party / Lender" />
-                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount" />
+                    <input type="text" class="rounded border p-1 w-1/3" placeholder="Name of Party / Lender"
+                        wire:model="data.income.other_sources.otherParty.name" />
+                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount"
+                        wire:model="data.income.other_sources.otherParty.amount" />
                 </div>
             </div>
 
-            <!-- 4. Crypto Income -->
             <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium">
-                    4. Crypto / VDA Annual Statement
-                </span>
-                <div class="w-40">
-                    @include('partials.accordions.assets.file-upload', [
-                        'label' => 'Crypto Income Statement',
-                        'description' => 'Upload annual summary from crypto platforms for VDA income.',
-                        'multiple' => true
-                    ])
+                <span class="text-sm font-medium">4. Crypto / VDA Annual Statement</span>
+                <div class="w-48">
+                    <x-file-upload wire:model="data.income.other_sources.crypto_statement" />
                 </div>
             </div>
 
-            <!-- 5. Other Income -->
             <div>
                 <label class="block text-sm font-medium mb-1">5. Other Income (not covered above)</label>
                 <div class="flex flex-wrap gap-4">
-                    <input type="text" class="rounded border p-1 w-1/2" placeholder="Description" />
-                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount" />
+                    <input type="text" class="rounded border p-1 w-1/2" placeholder="Description"
+                        wire:model="data.income.other_sources.other.description" />
+                    <input type="number" class="rounded border p-1 w-32" placeholder="Amount"
+                        wire:model="data.income.other_sources.other.amount" />
                 </div>
             </div>
         </div>

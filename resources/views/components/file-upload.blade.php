@@ -1,26 +1,33 @@
-@props(['id'])
+@php
+    $uploadId = 'file-upload-' . uniqid();
+@endphp
 
 <div 
     x-data="{ files: [] }" 
-    class="space-y-2 w-full">
-
+    class="space-y-2 w-full"
+>
     <!-- Hidden file input -->
     <input 
         type="file" 
         multiple 
         class="hidden"
-        id="file-upload-{{ $id }}"
-        @change="files = Array.from($event.target.files).map(file => ({
-            name: file.name,
-            size: (file.size / 1024 / 1024).toFixed(2) + 'MB',
-            type: file.name.split('.').pop().toUpperCase()
-        }))"
+        id="{{ $uploadId }}"
+        @change="
+            let newFiles = Array.from($event.target.files).map(file => ({
+                name: file.name,
+                size: (file.size / 1024 / 1024).toFixed(2) + 'MB',
+                type: file.name.split('.').pop().toUpperCase()
+            }));
+            files = files.concat(newFiles);
+            $event.target.value = null; // Reset input to allow re-uploads
+        "
     />
 
     <!-- Upload button -->
     <label 
-        for="file-upload-{{ $id }}"
-        class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-gray-50 text-sm rounded-md cursor-pointer border border-gray-300 shadow-sm">
+        for="{{ $uploadId }}"
+        class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-gray-50 text-sm rounded-md cursor-pointer border border-gray-300 shadow-sm"
+    >
         📎 Attach Files
     </label>
 

@@ -15,11 +15,8 @@
             <span class="text-sm font-medium">
                 🧾 Receipt of Donation (Charity / Politics / Scientific Research)
             </span>
-            <div class="w-40">
-                @include('partials.accordions.assets.file-upload', [
-                    'label' => 'Donation Receipt',
-                    'description' => 'Upload receipt for donation made to eligible institutions under 80G, 80GGA, or 80GGC.'
-                ])
+            <div class="w-48">
+                <x-file-upload id="donation_receipt" wire:model="data.deductions.80G.donation_receipt" />
             </div>
         </div>
     </div>
