@@ -18,7 +18,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1">Form 16</label>
                     <div class="w-48">
-                        <x-file-upload id="form_16" wire:model="data.income.salary.form_16" />
+                        <x-file-upload id="form_16" model="form16" />
                     </div>
                 </div>
 
@@ -26,7 +26,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1">Salary Slips</label>
                     <div class="w-48">
-                        <x-file-upload id="salary_slips" wire:model="data.income.salary.salary_slips" />
+                        <x-file-upload id="salary_slips" model="salarySlips" />
                     </div>
                 </div>
 
@@ -34,7 +34,7 @@
                 <div>
                     <label class="block text-sm font-medium mb-1">Arrear Sheet (if received)</label>
                     <div class="w-48">
-                        <x-file-upload id="arrear_sheet" wire:model="data.income.salary.arrear_sheet" />
+                        <x-file-upload id="arrear_sheet" model="arrearSheet" />
                     </div>
                 </div>
             </div>

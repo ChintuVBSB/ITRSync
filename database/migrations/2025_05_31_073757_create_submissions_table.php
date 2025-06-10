@@ -22,7 +22,6 @@ return new class extends Migration
             ->constrained('persons')
             ->onDelete('cascade');
             $table->string('year');
-            $table->json('data')->nullable();
             $table->timestamps();
         });
     }

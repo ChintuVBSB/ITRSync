@@ -114,9 +114,14 @@ class SubmissionDetails extends Component
         ],
     ];
 
+    public $form16 = [];
+    public $salarySlips = [];
+    public $arrearSheet = [];
+
     public function mount($submissionId)
     {
         $this->submission = Submission::with(['person', 'incomeTypes', 'deductionTypes'])->findOrFail($submissionId);
+
     }
 
     public function addRentedProperty()
@@ -158,12 +163,61 @@ class SubmissionDetails extends Component
         return $file ? $file->store($folder, 'public') : null;
     }
 
+    private function processFileUploads()
+    {
+        $this->data['income']['salary']['form_16'] = [];
+        foreach ($this->form16 as $file) {
+            $this->data['income']['salary']['form_16'][] = $this->storeFile($file);
+        }
+
+        $this->data['income']['salary']['salary_slips'] = [];
+        foreach ($this->salarySlips as $file) {
+            $this->data['income']['salary']['salary_slips'][] = $this->storeFile($file);
+        }
+
+        $this->data['income']['salary']['arrear_sheet'] = [];
+        foreach ($this->arrearSheet as $file) {
+            $this->data['income']['salary']['arrear_sheet'][] = $this->storeFile($file);
+        }
+
+        $this->data['income']['other_sources']['interest_certificate'] = $this->storeFile($this->data['income']['other_sources']['interest_certificate']);
+        $this->data['income']['other_sources']['crypto_statement'] = $this->storeFile($this->data['income']['other_sources']['crypto_statement']);
+        $this->data['income']['capitalGains']['demat_statement'] = $this->storeFile($this->data['income']['capitalGains']['demat_statement']);
+        $this->data['income']['capitalGains']['sale_deed'] = $this->storeFile($this->data['income']['capitalGains']['sale_deed']);
+        $this->data['income']['capitalGains']['purchase_deed'] = $this->storeFile($this->data['income']['capitalGains']['purchase_deed']);
+        $this->data['income']['business']['normal']['pl_statement'] = $this->storeFile($this->data['income']['business']['normal']['pl_statement']);
+        $this->data['income']['house_property']['self']['interest_certificate'] = $this->storeFile($this->data['income']['house_property']['self']['interest_certificate']);
+        $this->data['deductions']['other']['document'] = $this->storeFile($this->data['deductions']['other']['document']);
+
+        foreach ($this->data['income']['house_property']['rentedProperties'] as $index => $property) {
+            $this->data['income']['house_property']['rentedProperties'][$index]['house_tax_receipt'] = $this->storeFile($property['house_tax_receipt']);
+            $this->data['income']['house_property']['rentedProperties'][$index]['interest_certificate'] = $this->storeFile($property['interest_certificate']);
+        }
+    }
+
+    public function saveAsDraftAndRedirect()
+    {
+        try {
+            $this->processFileUploads();
+
+            $this->submission->update([
+                'data' => $this->data,
+                'status' => 'draft',
+            ]);
+
+            return redirect()->route('user.submissions.preview.view', $this->submission->id);
+        } catch (\Throwable $e) {
+            logger('Draft save failed: ' . $e->getMessage());
+            dd($e->getMessage());
+        }
+    }
+
     public function save()
     {
         $this->validate([
-            'data.income.salary.form_16.*' => 'nullable|file|max:5120',
-            'data.income.salary.salary_slips.*' => 'nullable|file|max:5120',
-            'data.income.salary.arrear_sheet.*' => 'nullable|file|max:5120',
+            'form16.*' => 'nullable|file|max:5120',
+            'salarySlips.*' => 'nullable|file|max:5120',
+            'arrearSheet.*' => 'nullable|file|max:5120',
             'data.income.salary.employer_pan' => 'nullable|string|max:50',
             'data.income.salary.employer_address' => 'nullable|string|max:255',
             'data.income.salary.salary_amount' => 'nullable|numeric',
@@ -177,36 +231,14 @@ class SubmissionDetails extends Component
             'data.income.other_sources.otherParty.amount' => 'nullable|numeric',
             'data.income.other_sources.other.description' => 'nullable|string|max:255',
             'data.income.other_sources.other.amount' => 'nullable|numeric',
-            'data.deductions.other.document' => 'nullable|file|max:5120',
             'data.deductions.other.description' => 'nullable|string|max:255',
         ]);
 
+        $this->processFileUploads();
+
         $this->submission->update([
-        'data' => $this->data,
+            'data' => $this->data,
         ]);
-
-        // Handle array-based uploads
-        foreach (['form_16', 'salary_slips', 'arrear_sheet'] as $field) {
-            foreach ($this->data['income']['salary'][$field] as $key => $file) {
-                $this->data['income']['salary'][$field][$key] = $this->storeFile($file);
-            }
-        }
-
-        // Single file uploads
-        $this->data['income']['other_sources']['interest_certificate'] = $this->storeFile($this->data['income']['other_sources']['interest_certificate']);
-        $this->data['income']['other_sources']['crypto_statement'] = $this->storeFile($this->data['income']['other_sources']['crypto_statement']);
-        $this->data['income']['capitalGains']['demat_statement'] = $this->storeFile($this->data['income']['capitalGains']['demat_statement']);
-        $this->data['income']['capitalGains']['sale_deed'] = $this->storeFile($this->data['income']['capitalGains']['sale_deed']);
-        $this->data['income']['capitalGains']['purchase_deed'] = $this->storeFile($this->data['income']['capitalGains']['purchase_deed']);
-        $this->data['income']['business']['normal']['pl_statement'] = $this->storeFile($this->data['income']['business']['normal']['pl_statement']);
-        $this->data['income']['house_property']['self']['interest_certificate'] = $this->storeFile($this->data['income']['house_property']['self']['interest_certificate']);
-        $this->data['deductions']['other']['document'] = $this->storeFile($this->data['deductions']['other']['document']);
-
-        // Dynamic arrays (e.g., rentedProperties)
-        foreach ($this->data['income']['house_property']['rentedProperties'] as $index => $property) {
-            $this->data['income']['house_property']['rentedProperties'][$index]['house_tax_receipt'] = $this->storeFile($property['house_tax_receipt']);
-            $this->data['income']['house_property']['rentedProperties'][$index]['interest_certificate'] = $this->storeFile($property['interest_certificate']);
-        }
 
         session()->flash('message', 'Data saved and files uploaded successfully.');
     }

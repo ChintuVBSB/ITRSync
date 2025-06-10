@@ -1,3 +1,8 @@
+@props([
+    'id' => 'form16Upload',
+    'model' => 'form16', // Default Livewire model to bind to
+])
+
 @php
     $uploadId = 'file-upload-' . uniqid();
 @endphp
@@ -6,12 +11,13 @@
     x-data="{ files: [] }" 
     class="space-y-2 w-full"
 >
-    <!-- Hidden file input -->
+    <!-- Hidden file input bound to Livewire -->
     <input 
         type="file" 
         multiple 
+        id="{{ $uploadId }}" 
         class="hidden"
-        id="{{ $uploadId }}"
+        wire:model="{{ $model }}"
         @change="
             let newFiles = Array.from($event.target.files).map(file => ({
                 name: file.name,
@@ -19,7 +25,6 @@
                 type: file.name.split('.').pop().toUpperCase()
             }));
             files = files.concat(newFiles);
-            $event.target.value = null; // Reset input to allow re-uploads
         "
     />
 
@@ -31,7 +36,7 @@
         📎 Attach Files
     </label>
 
-    <!-- File list -->
+    <!-- File list preview -->
     <template x-for="(file, index) in files" :key="index">
         <div class="flex items-center justify-between p-2 rounded-md border bg-gray-50 hover:bg-gray-100">
             <div class="flex items-center gap-2 truncate">
