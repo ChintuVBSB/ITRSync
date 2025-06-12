@@ -15,41 +15,47 @@ class IncomeFromHousePropertyForm extends Component
 
     public Submission $submission;
 
-    public array $rentedProperties = [];
+    public array $rentedInputs = [];
     public $selfAddress;
     public $selfOwnershipPercent;
     public $selfInterestCertificate;
-    protected $listeners = ['switch-tab' => 'save'];
+
+    protected $listeners = ['save-house' => 'save'];
 
     public function mount(Submission $submission)
     {
         $this->submission = $submission;
 
-        // preload existing data if needed
         $income = $this->submission->incomeFromHouseProperty()->firstOrCreate([]);
-        
-        if ($income) {
-            $this->rentedProperties = $income->rentedProperties->map(fn ($r) => [
-                'tenant_name' => $r->tenant_name,
-                'property_address' => $r->property_address,
-                'rental_income' => $r->rental_income,
-                'ownership_percent' => $r->ownership_percent,
-                'months_occupied' => $r->months_occupied,
-                'house_tax_receipt' => null,
-                'interest_certificate' => null,
-            ])->toArray();
 
-            $self = $income->selfOccupiedProperties->first();
-            if ($self) {
-                $this->selfAddress = $self->property_address;
-                $this->selfOwnershipPercent = $self->ownership_percent;
-            }
+        $self = $income->selfOccupiedProperties()->first();
+        if ($self) {
+            $this->selfAddress = $self->property_address;
+            $this->selfOwnershipPercent = $self->ownership_percent;
+        }
+
+        $rented = $income->rentedProperties()->get();
+        if ($rented->isNotEmpty()) {
+            $this->rentedInputs = $rented->map(function ($r) {
+                return [
+                    'tenant_name' => $r->tenant_name,
+                    'property_address' => $r->property_address,
+                    'rental_income' => $r->rental_income,
+                    'ownership_percent' => $r->ownership_percent,
+                    'months_occupied' => $r->months_occupied,
+                    'house_tax_receipt' => null,
+                    'interest_certificate' => null,
+                ];
+            })->toArray();
+        } else {
+            $this->rentedInputs = [];
+            $this->addRentedProperty();
         }
     }
 
     public function addRentedProperty()
     {
-        $this->rentedProperties[] = [
+        $this->rentedInputs[] = [
             'tenant_name' => '',
             'property_address' => '',
             'rental_income' => '',
@@ -62,42 +68,45 @@ class IncomeFromHousePropertyForm extends Component
 
     public function removeRentedProperty($index)
     {
-        unset($this->rentedProperties[$index]);
-        $this->rentedProperties = array_values($this->rentedProperties);
+        unset($this->rentedInputs[$index]);
+        $this->rentedInputs = array_values($this->rentedInputs);
     }
 
     public function save()
     {
-        $income = $this->submission->incomeFromHouseProperties()->firstOrCreate([]);
+        $income = IncomeFromHouseProperty::firstOrCreate([
+            'submission_id' => $this->submission->id,
+        ]);
 
-        // Clean old data
         $income->rentedProperties()->delete();
         $income->selfOccupiedProperties()->delete();
-
-        // Save rented
-        foreach ($this->rentedProperties as $property) {
-            $houseTax = $property['house_tax_receipt']?->store('uploads/property/house_tax', 'public');
-            $interestCert = $property['interest_certificate']?->store('uploads/property/interest', 'public');
+        \Log::info('Saving rented inputs:', $this->rentedInputs);
+        foreach ($this->rentedInputs as $property) {
+            $houseTaxReceipt = $property['house_tax_receipt'] ?? null;
+            $interestCertificate = $property['interest_certificate'] ?? null;
 
             $income->rentedProperties()->create([
-                'tenant_name' => $property['tenant_name'],
-                'property_address' => $property['property_address'],
-                'rental_income' => $property['rental_income'],
-                'ownership_percent' => $property['ownership_percent'],
-                'months_occupied' => $property['months_occupied'],
-                'house_tax_receipt' => $houseTax,
-                'interest_certificate' => $interestCert,
+                'income_from_house_property_id' => $income->id,
+                'tenant_name' => $property['tenant_name'] ?: null,
+                'property_address' => $property['property_address'] ?: null,
+                'rental_income' => is_numeric($property['rental_income']) ? $property['rental_income'] : null,
+                'ownership_percent' => is_numeric($property['ownership_percent']) ? $property['ownership_percent'] : null,
+                'months_occupied' => is_numeric($property['months_occupied']) ? $property['months_occupied'] : null,
+                'house_tax_receipt' => $houseTaxReceipt ? $houseTaxReceipt->store('uploads/property/house_tax', 'public') : null,
+                'interest_certificate' => $interestCertificate ? $interestCertificate->store('uploads/property/interest', 'public') : null,
             ]);
         }
 
-        // Save self-occupied
-        $selfInterest = $this->selfInterestCertificate?->store('uploads/property/self_interest', 'public');
-
-        $income->selfOccupiedProperties()->create([
-            'property_address' => $this->selfAddress,
-            'ownership_percent' => $this->selfOwnershipPercent,
-            'interest_certificate' => $selfInterest,
-        ]);
+        if ($this->selfAddress || $this->selfOwnershipPercent || $this->selfInterestCertificate) {
+            $income->selfOccupiedProperties()->create([
+                'income_from_house_property_id' => $income->id,
+                'property_address' => $this->selfAddress ?? null,
+                'ownership_percent' => $this->selfOwnershipPercent ?? null,
+                'interest_certificate' => $this->selfInterestCertificate
+                    ? $this->selfInterestCertificate->store('uploads/property/self_interest', 'public')
+                    : null,
+            ]);
+        }
 
         session()->flash('message', 'House property income saved!');
     }

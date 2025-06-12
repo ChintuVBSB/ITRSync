@@ -11,14 +11,18 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Placeholder;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
 class CreateSubmission extends CreateRecord
 {
     protected static string $resource = SubmissionResource::class;
+
     protected array $selectedIncomeTypes = [];
     protected array $selectedDeductionTypes = [];
+
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -45,7 +49,7 @@ class CreateSubmission extends CreateRecord
                 ]),
 
                 CheckboxList::make('income_types')
-                    ->label('Select Income Sources')
+                    ->label('Select Income Types')
                     ->options([
                         'salary' => 'Salary',
                         'house_property' => 'House Property',
@@ -54,9 +58,10 @@ class CreateSubmission extends CreateRecord
                         'other_sources' => 'Other Sources',
                     ])
                     ->columns(1),
+                    
 
                 CheckboxList::make('deduction_types')
-                    ->label('Deduction Types')
+                    ->label('Select Deduction Types')
                     ->options([
                         '80C' => '80 C - Investments',
                         '80D' => '80 D - Mediclaim',
@@ -65,35 +70,45 @@ class CreateSubmission extends CreateRecord
                         'other' => 'Other Deduction Documents',
                     ])
                     ->columns(1),
-            ]),
+                
+                CheckboxList::make('Other_income_docs')
+                    ->label('Other')
+                    ->options([
+                        'other' => 'Whether your gross total annual income is more than Rs. 1 cr',
+                    ])
+                    ->columns(1),
+            ])
+
         ]);
     }
 
-        protected function mutateFormDataBeforeCreate(array $data): array
-        {   
-            $this->selectedIncomeTypes = $data['income_types'] ?? [];
-            $this->selectedDeductionTypes = $data['deduction_types'] ?? [];
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $this->selectedIncomeTypes = $data['income_types'] ?? [];
+        $this->selectedDeductionTypes = $data['deduction_types'] ?? [];
 
-            unset($data['income_types'], $data['deduction_types']);
-            $data['user_id'] = Auth::id();
-            return $data;
-        }
+        unset($data['income_types'], $data['deduction_types']);
+        $data['user_id'] = Auth::id();
+        $data['estimated_income'] = $data['estimated_income'] ?? null;
+
+        return $data;
+    }
 
     protected function afterCreate(): void
-{
-    $submission = $this->record;
+    {
+        $submission = $this->record;
 
-    $incomeTypeIds = IncomeType::whereIn('slug', $this->selectedIncomeTypes)->pluck('id');
-    $deductionTypeIds = DeductionType::whereIn('slug', $this->selectedDeductionTypes)->pluck('id');
+        $incomeTypeIds = IncomeType::whereIn('slug', $this->selectedIncomeTypes)->pluck('id');
+        $deductionTypeIds = DeductionType::whereIn('slug', $this->selectedDeductionTypes)->pluck('id');
 
-    $submission->incomeTypes()->sync($incomeTypeIds);
-    $submission->deductionTypes()->sync($deductionTypeIds);
+        $submission->incomeTypes()->sync($incomeTypeIds);
+        $submission->deductionTypes()->sync($deductionTypeIds);
 
-    $this->redirect(route('submission.details', ['submissionId' => $submission->id]));
-}
+        $this->redirect(route('submission.details', ['submissionId' => $submission->id]));
+    }
 
     protected function getRedirectUrl(): string
     {
-    return route('submission.details', ['submissionId' => $this->record->id]);
+        return route('submission.details', ['submissionId' => $this->record->id]);
     }
 }

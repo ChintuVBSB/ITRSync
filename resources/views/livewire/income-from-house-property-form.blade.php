@@ -20,28 +20,29 @@
                         class="text-indigo-600 text-sm font-medium hover:underline">+ Add More Property</button>
                 </div>
 
-                @foreach ($rentedProperties as $index => $property)
+                @foreach ($rentedInputs as $index => $property)
+                
                     <div class="rounded-lg p-4 mb-4 space-y-4 bg-gray-50">
                         <div class="grid sm:grid-cols-3 gap-4">
-                            <input type="text" wire:model="rentedProperties.{{ $index }}.tenant_name" placeholder="Tenant Name" class="rounded border p-1">
-                            <input type="number" wire:model="rentedProperties.{{ $index }}.rental_income" placeholder="Rental Income" class="rounded border p-1">
-                            <input type="text" wire:model="rentedProperties.{{ $index }}.property_address" placeholder="Property Address" class="rounded border p-1">
+                            <input type="text" wire:model="rentedInputs.{{ $index }}.tenant_name" placeholder="Tenant Name" class="rounded border p-1">
+                            <input type="number" wire:model="rentedInputs.{{ $index }}.rental_income" placeholder="Rental Income" class="rounded border p-1">
+                            <input type="text" wire:model="rentedInputs.{{ $index }}.property_address" placeholder="Property Address" class="rounded border p-1">
                         </div>
 
                         <div class="grid sm:grid-cols-3 gap-4">
                             <div>
                                 <label class="text-sm font-medium mb-1">House Tax Receipt</label>
-                                <input type="file" wire:model="rentedProperties.{{ $index }}.house_tax_receipt" class="w-full rounded border">
+                                <input type="file" wire:model="rentedInputs.{{ $index }}.house_tax_receipt" class="w-full rounded border">
                             </div>
                             <div>
                                 <label class="text-sm font-medium mb-1">Interest Certificate</label>
-                                <input type="file" wire:model="rentedProperties.{{ $index }}.interest_certificate" class="w-full rounded border">
+                                <input type="file" wire:model="rentedInputs.{{ $index }}.interest_certificate" class="w-full rounded border">
                             </div>
                         </div>
 
                         <div class="grid sm:grid-cols-3 gap-4">
-                            <input type="text" wire:model="rentedProperties.{{ $index }}.ownership_percent" placeholder="% Ownership" class="rounded border p-1">
-                            <input type="number" wire:model="rentedProperties.{{ $index }}.months_occupied" placeholder="Months Occupied" class="rounded border p-1">
+                            <input type="text" wire:model="rentedInputs.{{ $index }}.ownership_percent" placeholder="% Ownership" class="rounded border p-1">
+                            <input type="number" wire:model="rentedInputs.{{ $index }}.months_occupied" placeholder="Months Occupied" class="rounded border p-1">
                         </div>
 
                         <div class="text-right">
@@ -49,7 +50,7 @@
                                 class="text-red-500 text-sm font-medium hover:underline">Remove</button>
                         </div>
                     </div>
-                @endforeach
+                @endforeach 
             </div>
 
             <!-- Self-Occupied Property -->

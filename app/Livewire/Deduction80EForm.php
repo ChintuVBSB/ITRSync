@@ -25,7 +25,7 @@ class Deduction80EForm extends Component
 
         Deduction80E::updateOrCreate(
             ['submission_id' => $this->submission->id],
-            ['education_loan_certificate' => $path]
+            ['education_loan_interest_proofs' => [$path]]
         );
 
         session()->flash('message', '80E Education Loan certificate saved.');

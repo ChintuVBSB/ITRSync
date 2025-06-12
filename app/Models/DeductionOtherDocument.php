@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class DeductionOtherDocument extends Model
 {
     use HasFactory;
+
     protected $table = 'deductions_other_documents';
+
     protected $fillable = [
         'submission_id',
         'other_deduction_documents',

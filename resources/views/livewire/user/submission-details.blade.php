@@ -95,7 +95,7 @@
             <livewire:deduction-other-form :submission="$submission" />
         @endif
 
-        <button wire:click="saveAsDraftAndRedirect" class="px-4 py-2 bg-blue-600 text-white rounded">Save as Draft</button>
+        <button wire:click="saveAsDraftAndRedirect" class="px-4 py-2 bg-gray-600 rounded">Save as Draft</button>
 
     </div>
     <!-- Save & Preview Buttons -->

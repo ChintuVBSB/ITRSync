@@ -27,6 +27,8 @@ class IncomeFromBusinessForm extends Component
     public $firmInterest;
     public $firmProfitOrLoss;
     public $firmClosingBalance;
+    protected $listeners = ['save-business' => 'save'];
+    
 
     public function mount(Submission $submission)
     {

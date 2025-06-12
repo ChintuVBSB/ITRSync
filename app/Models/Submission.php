@@ -6,12 +6,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Person;
 use App\Models\User;
+
 class Submission extends Model
 {
     use HasFactory;
+
     protected $casts = [
         'data' => 'array',
     ];
+
     protected $fillable = [
         'submission_id',
         'user_id',
@@ -42,20 +45,51 @@ class Submission extends Model
 
     public function incomeFromHouseProperty()
     {
-        return $this->hasOne(\App\Models\IncomeFromHouseProperty::class);
+        return $this->hasMany(IncomeFromHouseProperty::class);
     }
-    public function incomeFromSalaries()
+
+    public function incomeFromSalary()
     {
-        return $this->hasOne(\App\Models\IncomeFromSalary::class);
+        return $this->hasOne(IncomeFromSalary::class);
     }
 
     public function incomeFromBusiness()
     {
-        return $this->hasOne(\App\Models\IncomeFromBusiness::class);
+        return $this->hasOne(IncomeFromBusiness::class);
+    }
+
+    public function incomeFromCapitalGains()
+    {
+        return $this->hasOne(IncomeFromCapitalGain::class);
     }
 
     public function incomeFromOtherSources()
     {
-        return $this->hasOne(\App\Models\IncomeFromOtherSource::class);
+        return $this->hasOne(IncomeFromOtherSource::class);
+    }
+
+    public function deduction80C()
+    {
+        return $this->hasOne(Deduction80C::class);
+    }
+
+    public function deduction80D()
+    {
+        return $this->hasOne(Deduction80D::class);
+    }
+
+    public function deduction80E()
+    {
+        return $this->hasOne(Deduction80E::class);
+    }
+
+    public function deduction80G()
+    {
+        return $this->hasOne(DeductionDonation::class);
+    }
+
+    public function deductionOther()
+    {
+        return $this->hasOne(DeductionOtherDocument::class);
     }
 }

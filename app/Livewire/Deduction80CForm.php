@@ -13,13 +13,13 @@ class Deduction80CForm extends Component
 
     public Submission $submission;
 
-    public $lifeInsurance;
-    public $ppf;
-    public $epf;
-    public $mutualFunds;
-    public $tuitionFees;
-    public $otherProofs;
-
+    public $lifeInsurance = [];
+    public $ppf = [];
+    public $epf = [];
+    public $mutualFunds = [];
+    public $tuitionFees = [];
+    public $otherProofs = [];
+    protected $listeners = ['save-80c' => 'save'];
     public function mount(Submission $submission)
     {
         $this->submission = $submission;
@@ -30,22 +30,23 @@ class Deduction80CForm extends Component
         }
     }
 
-    public function save()
-    {
-        $deduction = Deduction80C::updateOrCreate(
-            ['submission_id' => $this->submission->id],
-            [
-                'life_insurance' => $this->lifeInsurance?->store('uploads/80c/life', 'public'),
-                'ppf' => $this->ppf?->store('uploads/80c/ppf', 'public'),
-                'epf' => $this->epf?->store('uploads/80c/epf', 'public'),
-                'mutual_funds' => $this->mutualFunds?->store('uploads/80c/mutual', 'public'),
-                'tuition_fees' => $this->tuitionFees?->store('uploads/80c/tuition', 'public'),
-                'other_proofs' => $this->otherProofs?->store('uploads/80c/other', 'public'),
-            ]
-        );
+   public function save()
+{
+    Deduction80C::updateOrCreate(
+        ['submission_id' => $this->submission->id],
+        [
+            'life_insurance_receipts' => $this->lifeInsurance ? collect($this->lifeInsurance)->map(fn($file) => $file->store('uploads/80c/life', 'public')) : null,
+            'ppf_statements' => $this->ppf ? collect($this->ppf)->map(fn($file) => $file->store('uploads/80c/ppf', 'public')) : null,
+            'epf_statements' => $this->epf ? collect($this->epf)->map(fn($file) => $file->store('uploads/80c/epf', 'public')) : null,
+            'mutual_fund_fds' => $this->mutualFunds ? collect($this->mutualFunds)->map(fn($file) => $file->store('uploads/80c/mutual', 'public')) : null,
+            'tuition_fee_receipts' => $this->tuitionFees ? collect($this->tuitionFees)->map(fn($file) => $file->store('uploads/80c/tuition', 'public')) : null,
+            'other_investment_proofs' => $this->otherProofs ? collect($this->otherProofs)->map(fn($file) => $file->store('uploads/80c/other', 'public')) : null,
+        ]
+    );
 
-        session()->flash('message', '80C Deduction documents saved.');
-    }
+    session()->flash('message', '80C Deduction documents saved.');
+}
+
 
     public function render()
     {

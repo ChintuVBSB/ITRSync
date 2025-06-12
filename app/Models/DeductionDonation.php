@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class DeductionDonation extends Model
 {
     use HasFactory;
-
+    protected $table = 'deductions_donations';
     protected $fillable = [
         'submission_id',
         'donation_receipts',

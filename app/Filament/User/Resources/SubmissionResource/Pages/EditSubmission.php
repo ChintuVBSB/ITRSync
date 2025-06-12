@@ -88,6 +88,10 @@ class EditSubmission extends EditRecord
         $submission->incomeTypes()->sync($incomeTypeIds);
         $submission->deductionTypes()->sync($deductionTypeIds);
     }
+    protected function getRedirectUrl(): string
+    {
+        return route('submission.details', ['submissionId' => $this->record->id]);
+    }
 
     protected function getHeaderActions(): array
     {

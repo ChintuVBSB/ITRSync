@@ -17,35 +17,38 @@ class IncomeFromCapitalGainsForm extends Component
     public $saleDeed;
     public $purchaseDeed;
     public $improvementExpense;
-
+    protected $listeners = ['save-capital-gains' => 'save'];
     public function mount(Submission $submission)
     {
         $this->submission = $submission;
 
         $record = IncomeFromCapitalGain::where('submission_id', $submission->id)->first();
         if ($record) {
-            $this->improvementExpense = $record->improvement_expense;
+            $this->improvementExpense = $record->improvement_expense_details;
         }
     }
 
     public function save()
-    {
-        $demat = $this->dematStatement?->store('uploads/capital_gains/demat', 'public');
-        $sale = $this->saleDeed?->store('uploads/capital_gains/sale', 'public');
-        $purchase = $this->purchaseDeed?->store('uploads/capital_gains/purchase', 'public');
+{
+    $demat = $this->dematStatement ? [$this->dematStatement->store('uploads/capital_gains/demat', 'public')] : [];
+    $sale = $this->saleDeed ? [$this->saleDeed->store('uploads/capital_gains/sale', 'public')] : [];
+    $purchase = $this->purchaseDeed ? [$this->purchaseDeed->store('uploads/capital_gains/purchase', 'public')] : [];
 
-        IncomeFromCapitalGain::updateOrCreate(
-            ['submission_id' => $this->submission->id],
-            [
-                'demat_statement' => $demat,
-                'sale_deed' => $sale,
-                'purchase_deed' => $purchase,
-                'improvement_expense' => $this->improvementExpense,
-            ]
-        );
+    IncomeFromCapitalGain::updateOrCreate(
+        ['submission_id' => $this->submission->id],
+        [
+            'demat_statements' => $demat,
+            'sale_deeds' => $sale,
+            'purchase_deeds' => $purchase,
+            'improvement_expense_details' => $this->improvementExpense,
+        ]
+    );
 
-        session()->flash('message', 'Capital Gains data saved.');
-    }
+    session()->flash('message', 'Capital Gains data saved.');
+}
+
+
+
 
     public function render()
     {

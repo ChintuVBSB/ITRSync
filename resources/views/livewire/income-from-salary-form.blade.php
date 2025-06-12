@@ -33,29 +33,41 @@
             <div class="space-y-2 mt-6">
                 <p class="font-semibold">If no Form 16 (e.g. Pension Only)</p>
                 <div class="flex flex-col sm:grid sm:grid-cols-3 gap-4">
-                    <input type="text" wire:model.defer="employerPan" placeholder="PAN of Employer" class="rounded border p-2" />
-                    <input type="text" wire:model.defer="employerAddress" placeholder="Employer Address" class="rounded border p-2" />
-                    <input type="number" wire:model.defer="salaryAmount" placeholder="Salary Amount" class="rounded border p-2" />
+                    <input type="text" wire:model.defer="employerPan" placeholder="PAN of Employer" class="rounded border p-1" />
+                    <input type="text" wire:model.defer="employerAddress" placeholder="Employer Address" class="rounded border p-1" />
+                    <input type="number" wire:model.defer="salaryAmount" placeholder="Salary Amount" class="rounded border p-1" />
                 </div>
             </div>
 
             <!-- HRA -->
-            <div class="mt-6 space-y-2">
-                <p class="font-semibold">Details required for claiming HRA</p>
-                <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
-                    <input type="number" wire:model.defer="hraRentPaid" placeholder="Rent Paid" class="rounded border p-2" />
-                    <input type="text" wire:model.defer="hraCity" placeholder="City of Residence" class="rounded border p-2" />
-                </div>
+            <!-- HRA -->
+<div class="mt-6 space-y-2 flex flex-col gap-2">
+    <p class="font-semibold">Details required for claiming HRA</p>
 
-                <div class="pl-4 border-l-4 border-indigo-300 mt-4">
-                    <p class="font-medium text-sm mb-2">Landlord Details</p>
-                    <div class="flex flex-col sm:grid sm:grid-cols-2 gap-4">
-                        <input type="text" wire:model.defer="hraLandlordName" placeholder="Name of Landlord" class="rounded border p-2" />
-                        <input type="text" wire:model.defer="hraPropertyAddress" placeholder="Property Address" class="rounded border p-2" />
-                    </div>
-                </div>
-            </div>
+    <div class="flex flex-row justify-between sm:grid-cols-4 gap-4 mb-2">
+        <!-- Rent Paid -->
+        <div class="">
+            <input type="number" wire:model.defer="hraRentPaid" placeholder="Rent Paid" class="rounded border p-1" />
+        </div>
 
+        <!-- City of Residence -->
+        <div class="">
+            <input type="text" wire:model.defer="hraCity" placeholder="City of Residence" class="rounded border p-1 w-1/3" />
+        </div>
+
+        <!-- Landlord Name -->
+        <div class="">
+            <input type="text" wire:model.defer="hraLandlordName" placeholder="Name of Landlord" class="rounded border p-1" />
+        </div>
+    </div>
+        <!-- Property Address -->
+        <div class="w-full">
+            <div class="w-32">
+            <input type="text" wire:model.defer="hraPropertyAddress" placeholder="Property Address" class="rounded border p-1" />
+        </div>
+        </div>
+        
+</div>
             <!-- Save Button & Flash Message -->
             <div class="mt-6">
                 <button wire:click="save" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">

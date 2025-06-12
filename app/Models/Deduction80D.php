@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Deduction80D extends Model
 {
     use HasFactory;
-
+    protected $table = 'deductions_80d';
     protected $fillable = [
         'submission_id',
         'mediclaim_receipts',

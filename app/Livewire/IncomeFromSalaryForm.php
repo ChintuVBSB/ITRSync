@@ -18,6 +18,8 @@ class IncomeFromSalaryForm extends Component
     public array $salarySlips = [];
     public array $arrearSheet = [];
 
+    protected $listeners = ['save-salary' => 'save'];
+
     // Text/Number fields
     public $employerPan;
     public $employerAddress;
@@ -44,25 +46,32 @@ class IncomeFromSalaryForm extends Component
             $this->hraLandlordName = $salary->hra_landlord_name;
             $this->hraPropertyAddress = $salary->hra_property_address;
 
-            // Optional: pre-fill file paths if needed
-            // $this->form16 = json_decode($salary->form_16, true) ?? [];
-            // $this->salarySlips = json_decode($salary->salary_slips, true) ?? [];
-            // $this->arrearSheet = json_decode($salary->arrear_sheets, true) ?? [];
+            $this->form16 = $salary->form_16 ?? [];
+            $this->salarySlips = $salary->salary_slips ?? [];
+            $this->arrearSheet = $salary->arrear_sheets ?? [];
         }
     }
 
     public function save()
     {
-        $form16Paths = collect($this->form16)->map(fn($file) => $file->store('uploads/salary/form16', 'public'))->toArray();
-        $slipPaths = collect($this->salarySlips)->map(fn($file) => $file->store('uploads/salary/slips', 'public'))->toArray();
-        $arrearPaths = collect($this->arrearSheet)->map(fn($file) => $file->store('uploads/salary/arrears', 'public'))->toArray();
+        $form16Paths = collect($this->form16)->map(function ($file) {
+            return is_string($file) ? $file : $file->store('uploads/salary/form16', 'public');
+        })->toArray();
+
+        $slipPaths = collect($this->salarySlips)->map(function ($file) {
+            return is_string($file) ? $file : $file->store('uploads/salary/slips', 'public');
+        })->toArray();
+
+        $arrearPaths = collect($this->arrearSheet)->map(function ($file) {
+            return is_string($file) ? $file : $file->store('uploads/salary/arrears', 'public');
+        })->toArray();
 
         IncomeFromSalary::updateOrCreate(
             ['submission_id' => $this->submission->id],
             [
-                'form_16' => json_encode($form16Paths),
-                'salary_slips' => json_encode($slipPaths),
-                'arrear_sheets' => json_encode($arrearPaths),
+                'form_16' => $form16Paths,
+                'salary_slips' => $slipPaths,
+                'arrear_sheets' => $arrearPaths,
                 'employer_pan' => $this->employerPan,
                 'employer_address' => $this->employerAddress,
                 'salary_amount' => $this->salaryAmount,

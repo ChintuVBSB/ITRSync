@@ -5,7 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Submission;
-use App\Models\Deduction80G;
+use App\Models\DeductionDonation;
 
 class Deduction80GForm extends Component
 {
@@ -23,9 +23,9 @@ class Deduction80GForm extends Component
     {
         $path = $this->donationReceipt?->store('uploads/80g/donations', 'public');
 
-        Deduction80G::updateOrCreate(
+        DeductionDonation::updateOrCreate(
             ['submission_id' => $this->submission->id],
-            ['donation_receipt' => $path]
+            ['donation_receipts' => [$path]]
         );
 
         session()->flash('message', '80G Donation receipt saved successfully.');

@@ -21,11 +21,11 @@ class Deduction80DForm extends Component
 
     public function save()
     {
-        $path = $this->healthInsurance?->store('uploads/80d/health', 'public');
+        $path = $this->healthInsurance ? [$this->healthInsurance->store('uploads/80d/health', 'public')] : null;
 
         Deduction80D::updateOrCreate(
             ['submission_id' => $this->submission->id],
-            ['health_insurance' => $path]
+            ['mediclaim_receipts' => $path]
         );
 
         session()->flash('message', '80D Mediclaim saved successfully.');

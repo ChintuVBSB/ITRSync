@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class IncomeFromHouseProperty extends Model
 {
     use HasFactory;
-
+    public array $rentedProperties = [];
+    
     protected $fillable = [
         'submission_id',
     ];

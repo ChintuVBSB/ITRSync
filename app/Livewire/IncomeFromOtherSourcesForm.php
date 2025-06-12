@@ -24,6 +24,7 @@ class IncomeFromOtherSourcesForm extends Component
 
     public $otherDescription;
     public $otherAmount;
+    protected $listeners = ['save-others' => 'save'];
 
     public function mount(Submission $submission): void
     {

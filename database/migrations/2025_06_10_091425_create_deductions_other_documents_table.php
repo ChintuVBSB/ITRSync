@@ -11,10 +11,12 @@ return new class extends Migration {
             $table->id();
 
             // Link to submission
-            $table->foreignId('submission_id')->constrained()->onDelete('cascade');
+            $table->foreignId('submission_id')
+                  ->constrained()
+                  ->onDelete('cascade');
 
-            // Uploads for other deduction types
-            $table->json('other_deduction_documents')->nullable(); // EV Loan, Disability, NPS etc.
+            // Store an array of uploads: path + description + timestamp
+            $table->json('other_deduction_documents')->nullable();
 
             $table->timestamps();
         });

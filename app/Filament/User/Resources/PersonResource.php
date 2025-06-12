@@ -7,6 +7,7 @@ use App\Filament\User\Resources\PersonResource\RelationManagers;
 use App\Models\Person;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -31,64 +32,101 @@ class PersonResource extends Resource
 {
     return $form
         ->schema([
-            TextInput::make('name')
-                ->required(),
-            Select::make('gender')
-                ->options([
-                    'male' => 'Male',
-                    'female' => 'Female',
-                    'other' => 'Other',
-                ])
-                ->required(),
+            // Name, Gender, DOB in a row
+            Grid::make(3)->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->columnSpan(1),
 
-            DatePicker::make('dob')
-                ->label('Date of Birth')
-                ->required(),
+                Select::make('gender')
+                    ->options([
+                        'male' => 'Male',
+                        'female' => 'Female',
+                        'other' => 'Other',
+                    ])
+                    ->required()
+                    ->columnSpan(1),
 
-            Textarea::make('address')->required(),
+                DatePicker::make('dob')
+                    ->label('Date of Birth')
+                    ->required()
+                    ->columnSpan(1),
+            ]),
 
-            TextInput::make('pan')->required(),
-            FileUpload::make('pan_attachment')->label('PAN Attachment')->required(),
+            // PAN and PAN attachment in the same row
+            Grid::make(4)->schema([
+                TextInput::make('pan')
+                    ->label('PAN Number')
+                    ->required(),
 
-            TextInput::make('aadhar')->required(),
-            FileUpload::make('aadhar_attachment')
-            ->label('Aadhar Attachment')
-            ->required(),
 
-            Select::make('residential_status')
-                ->label('Residential Status')
-                ->options([
-                    'Resident' => 'Resident',
-                    'Non-Resident' => 'Non-Resident',
-                    'Resident but Not Ordinary Resident' 
-                    => 'Resident but Not Ordinary Resident',
-                ])
-                ->columns(1),
+            // Aadhaar and Aadhaar attachment in the same row
+                TextInput::make('aadhar')
+                    ->label('Aadhaar Number')
+                    ->required(),
 
-            TextInput::make('mobile')
-            ->required(),
-            TextInput::make('email')
-            ->email()
-            ->required(),
+                FileUpload::make('pan_attachment')
+                    ->label('PAN Attachment')
+                    ->required()
+                    ->panelLayout('compact')
+                    ->visible(fn ($record) => !$record || !$record->pan_attachment),
+
+                FileUpload::make('aadhar_attachment')
+                    ->label('Aadhaar Attachment')
+                    ->required()
+                    ->visible(fn ($record) => !$record || !$record->aadhar_attachment),
+            ]),
+
+            // ITR Password, Address, Residential Status
+            Grid::make(4)->schema([
+                TextInput::make('itr_password')
+                    ->label('ITR Account Password')
+                    ->password()
+                    ->revealable()
+                    ->required(),
+
+                Select::make('residential_status')
+                    ->label('Residential Status')
+                    ->options([
+                        'Resident' => 'Resident',
+                        'Non-Resident' => 'Non-Resident',
+                        'Resident but Not Ordinary Resident' => 'Resident but Not Ordinary Resident',
+                    ])
+                    ->required(),
+                Textarea::make('address')
+                    ->label('Address')
+                    ->required()
+                    ->rows(2)
+                    ->columnSpan(2),
+            ]),
+
+            // Mobile and Email
+            Grid::make(3)->schema([
+                TextInput::make('mobile')
+                ->required()
+                ->columnSpan(1),
+                TextInput::make('email')
+                ->email()
+                ->required()
+                ->columnSpan(1),
+            ]),
+
+            // Bank Details
             Repeater::make('bankDetails')   
                 ->label('Bank Details')
                 ->relationship('bankDetails')
                 ->createItemButtonLabel('+ Add Bank Info')
                 ->schema([
-                    TextInput::make('bank_name')
-                        ->label('Bank Name')
-                        ->required(), 
-                    TextInput::make('account_number')
-                        ->label('Account Number')
-                        ->required(), 
-                    TextInput::make('ifsc_code')
-                        ->label('IFSC Code')
-                        ->required(),
+                    TextInput::make('bank_name')->label('Bank Name')->required(), 
+                    TextInput::make('account_number')->label('Account Number')->required(), 
+                    TextInput::make('ifsc_code')->label('IFSC Code')->required(),
                 ])
                 ->columns(3)
                 ->columnSpanFull()
         ]);
 }
+
+
 
     public static function table(Table $table): Table
     {
