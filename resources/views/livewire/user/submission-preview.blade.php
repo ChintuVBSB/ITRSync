@@ -196,7 +196,7 @@
             @endforeach
         </ul>
     </div>
-@endif
+    @endif
 
     @if($submission->deduction80E && !empty($submission->deduction80E->education_loan_interest_proofs))
     <div class="border p-4 rounded bg-white shadow-sm mt-6">
@@ -208,15 +208,44 @@
             @endforeach
         </ul>
     </div>
-@endif
+    @endif
 
-
-    @if($submission->deductionOther)
+    @if($submission->deduction80G && is_array($submission->deduction80G->donation_receipts))
         <div class="border p-4 rounded bg-white shadow-sm mt-6">
-            <h2 class="font-semibold text-gray-700 mb-2">Other Deductions</h2>
-            <p><strong>Description:</strong> {{ $submission->deductionOther->description ?? '—' }}</p>
+            <h2 class="text-lg font-semibold text-gray-700 mb-2">Deduction – 80G / 80GGA / 80GGC (Donations)</h2>
+            <p class="font-semibold">Uploaded Donation Receipts:</p>
+            <ul class="list-disc list-inside text-sm text-blue-600 space-y-1">
+                @foreach($submission->deduction80G->donation_receipts as $file)
+                    <li>
+                        <a href="{{ asset('storage/' . $file) }}" target="_blank" class="underline">
+                            {{ basename($file) }}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
         </div>
     @endif
+
+    @if($submission->deductionOther && is_array($submission->deductionOther->other_deduction_documents))
+    <div class="border p-4 rounded bg-white shadow-sm mt-6">
+        <h2 class="font-semibold text-gray-700 mb-2">Other Deductions</h2>
+
+        <ul class="list-disc list-inside text-sm space-y-1">
+            @foreach($submission->deductionOther->other_deduction_documents as $doc)
+                <li>
+                    <a href="{{ Storage::url($doc['path']) }}" target="_blank" class="text-blue-600 underline">
+                        {{ basename($doc['path']) }}
+                    </a>
+                    @if(!empty($doc['description']))
+                        — {{ $doc['description'] }}
+                    @endif
+                    <span class="text-gray-500 text-xs">({{ $doc['uploaded_at'] }})</span>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 
     {{-- Submit Button --}}
     <div class="mt-6 flex justify-between">
